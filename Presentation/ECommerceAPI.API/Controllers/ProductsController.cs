@@ -2,6 +2,7 @@
 using ECommerceAPI.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Xml.Linq;
 
 namespace ECommerceAPI.API.Controllers
 {
@@ -11,6 +12,7 @@ namespace ECommerceAPI.API.Controllers
     {
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IProductReadRepository _productReadRepository;
+
 
         public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository)
         {
@@ -22,18 +24,7 @@ namespace ECommerceAPI.API.Controllers
         [HttpGet]
         public async Task Get()
         {
-            //await _productWriteRepository.AddRangeAsync(new()
-            //{
-            //    new Product{Id = Guid.NewGuid(),Name = "Product 1",Price = 131,CreatedDate = DateTime.UtcNow,Stock = 10},
-            //    new Product{Id = Guid.NewGuid(),Name = "Product 2",Price = 231,CreatedDate = DateTime.UtcNow,Stock = 20},
-            //    new Product{Id = Guid.NewGuid(),Name = "Product 3",Price = 331,CreatedDate = DateTime.UtcNow,Stock = 130},
-            //});
-            //await _productWriteRepository.SaveAsync();
-
-            //NoTracking
-            var product = await _productReadRepository.GetByIdAsync("72ea0412-4673-478b-a1d6-7253d881d300",false);
-            product.Name = "Renamed Product 2";
-            _productWriteRepository.SaveAsync();
+           
         }
     }
 }

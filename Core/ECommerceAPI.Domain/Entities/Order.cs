@@ -16,6 +16,6 @@ namespace ECommerceAPI.Domain.Entities
         //Bir Order'ın birden fazla product'ı olduğunu ifade eder.
         public ICollection<Product> Products { get; set; }
         public Customer Customer { get; set; }
-        public int CustomerId { get; set; }
+        public Guid CustomerId { get; set; }
     }
 }
