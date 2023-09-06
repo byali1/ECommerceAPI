@@ -22,9 +22,22 @@ namespace ECommerceAPI.API.Controllers
 
         //Test
         [HttpGet]
-        public async Task Get()
+        public async Task<IActionResult> Get()
         {
-           
+            return Ok("CORS Test completed.");
         }
     }
 }
+
+
+/*
+
+ await _productWriteRepository.AddRangeAsync(new()
+   {
+       new Product{Id = Guid.NewGuid(),Name = "Product 1",Price = 131,CreatedDate = DateTime.UtcNow,Stock = 10},
+       new Product{Id = Guid.NewGuid(),Name = "Product 2",Price = 231,CreatedDate = DateTime.UtcNow,Stock = 20},
+       new Product{Id = Guid.NewGuid(),Name = "Product 3",Price = 331,CreatedDate = DateTime.UtcNow,Stock = 130},
+   });
+   await _productWriteRepository.SaveAsync();
+
+ */
