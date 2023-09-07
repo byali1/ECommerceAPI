@@ -1,8 +1,10 @@
-﻿using ECommerceAPI.Application.Repositories;
+﻿using System.Net;
+using ECommerceAPI.Application.Repositories;
 using ECommerceAPI.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Xml.Linq;
+using ECommerceAPI.Application.ViewModels.Products;
 
 namespace ECommerceAPI.API.Controllers
 {
@@ -24,7 +26,51 @@ namespace ECommerceAPI.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok("CORS Test completed.");
+            //CRUD yok, no-tracking
+            return Ok(_productReadRepository.GetAll(false));
+        }
+
+
+        //Test
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(string id)
+        {
+            return Ok( await _productReadRepository.GetByIdAsync(id, false));
+        }
+
+        //Test
+        [HttpPost]
+        public async Task<IActionResult> Post(VM_Create_Product model)
+        {
+            await _productWriteRepository.AddAsync(new Product()
+            {
+                Name = model.Name,
+                Price = model.Price,
+                Stock = model.Stock,
+            });
+            await _productWriteRepository.SaveAsync();
+            return StatusCode((int)HttpStatusCode.Created);
+        }
+
+        //Test
+        [HttpPut]
+        public async Task<IActionResult> Put(VM_Update_Product model)
+        {
+           var product = await _productReadRepository.GetByIdAsync(model.Id);
+           product.Stock = model.Stock;
+           product.Name = model.Name;
+           product.Price = model.Price;
+           await _productWriteRepository.SaveAsync();
+           return Ok();
+        }
+
+        //Test
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            await _productWriteRepository.Remove(id);
+            await _productWriteRepository.SaveAsync();
+            return Ok();
         }
     }
 }
