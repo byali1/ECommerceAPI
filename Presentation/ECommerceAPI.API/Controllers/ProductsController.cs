@@ -16,12 +16,14 @@ namespace ECommerceAPI.API.Controllers
     {
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IProductReadRepository _productReadRepository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
 
-        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository)
+        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IWebHostEnvironment webHostEnvironment)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         //Test
@@ -89,6 +91,33 @@ namespace ECommerceAPI.API.Controllers
         {
             await _productWriteRepository.Remove(id);
             await _productWriteRepository.SaveAsync();
+            return Ok();
+        }
+
+
+        //Test File Upload
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Upload()
+        {
+            //_webHostEnvironment.WebRootPath → wwwroot
+            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resource/product_images");
+
+            Random random = new Random();
+            //Client'dan gelen file data →  Request.Form.Files
+            foreach (var file in Request.Form.Files)
+            {
+                string fullPath = Path.Combine(uploadPath, $"{random.Next()}{Path.GetExtension(file.FileName)}");
+
+                if (!Directory.Exists(uploadPath))
+                {
+                    Directory.CreateDirectory(uploadPath);
+                }
+
+                using FileStream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
+                await file.CopyToAsync(fileStream);
+                await fileStream.FlushAsync();
+            }
+
             return Ok();
         }
     }
