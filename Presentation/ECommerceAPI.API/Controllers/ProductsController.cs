@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Xml.Linq;
 using ECommerceAPI.Application.RequestParameters;
+using ECommerceAPI.Application.Services;
 using ECommerceAPI.Application.ViewModels.Products;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,13 +18,15 @@ namespace ECommerceAPI.API.Controllers
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IProductReadRepository _productReadRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IFileService _fileService;
 
 
-        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IWebHostEnvironment webHostEnvironment)
+        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IWebHostEnvironment webHostEnvironment, IFileService fileService)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
             _webHostEnvironment = webHostEnvironment;
+            _fileService = fileService;
         }
 
         //Test
@@ -99,39 +102,9 @@ namespace ECommerceAPI.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Upload()
         {
-            //_webHostEnvironment.WebRootPath → wwwroot
-            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resource/product_images");
-
-            Random random = new Random();
-            //Client'dan gelen file data →  Request.Form.Files
-            foreach (var file in Request.Form.Files)
-            {
-                string fullPath = Path.Combine(uploadPath, $"{random.Next()}{Path.GetExtension(file.FileName)}");
-
-                if (!Directory.Exists(uploadPath))
-                {
-                    Directory.CreateDirectory(uploadPath);
-                }
-
-                using FileStream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
-                await file.CopyToAsync(fileStream);
-                await fileStream.FlushAsync();
-            }
-
+            _fileService.UploadAsync("resource/product_images",Request.Form.Files);
             return Ok();
         }
     }
 }
 
-
-/*
-
- await _productWriteRepository.AddRangeAsync(new()
-   {
-       new Product{Id = Guid.NewGuid(),Name = "Product 1",Price = 131,CreatedDate = DateTime.UtcNow,Stock = 10},
-       new Product{Id = Guid.NewGuid(),Name = "Product 2",Price = 231,CreatedDate = DateTime.UtcNow,Stock = 20},
-       new Product{Id = Guid.NewGuid(),Name = "Product 3",Price = 331,CreatedDate = DateTime.UtcNow,Stock = 130},
-   });
-   await _productWriteRepository.SaveAsync();
-
- */
