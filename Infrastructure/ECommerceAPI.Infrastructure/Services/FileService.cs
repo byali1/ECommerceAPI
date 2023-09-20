@@ -41,7 +41,7 @@ namespace ECommerceAPI.Infrastructure.Services
                 string newFileName = await RenameFileAsync(uploadPath, file.FileName);
 
                 bool result = await CopyFileAsync($"{uploadPath}\\{newFileName}", file);
-                filesList.Add((newFileName, $"{uploadPath}\\{newFileName}"));
+                filesList.Add((newFileName, $"{path}\\{newFileName}"));
                 results.Add(result);
             }
 
