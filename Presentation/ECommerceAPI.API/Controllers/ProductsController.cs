@@ -119,11 +119,11 @@ namespace ECommerceAPI.API.Controllers
         {
             //var entities = _fileService.UploadAsync("resource/product_images", Request.Form.Files);
 
-            var datas = await _storageService.UploadAsync("resource/files", Request.Form.Files);
-            await _productImageFileWriteRepository.AddRangeAsync(datas.Select(d => new ProductImageFile
+            var entities = await _storageService.UploadAsync("files", Request.Form.Files);
+            await _productImageFileWriteRepository.AddRangeAsync(entities.Select(e => new ProductImageFile
             {
-                FileName = d.fileName,
-                Path = d.pathOrContainerName,
+                FileName = e.fileName,
+                Path = e.pathOrContainerName,
                 StorageType = _storageService.StorageType
             }).ToList());
             await _productImageFileWriteRepository.SaveAsync();

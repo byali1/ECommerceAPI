@@ -11,7 +11,7 @@ namespace ECommerceAPI.Infrastructure.Operations
         public static string CharacterConverter(string name)
         {
             string source = @"ığüşöçĞÜŞİÖÇâß\!'^+%&/()=?_@€¨~,;:<>|. ";
-            string destination = @"igusocGUSIOC                          --";
+            string destination = @"igusocGUSIOC                          __";
 
             for (int i = 0; i < source.Length; i++)
             {
