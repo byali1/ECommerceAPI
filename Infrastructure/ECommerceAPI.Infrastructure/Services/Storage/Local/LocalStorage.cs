@@ -34,7 +34,7 @@ namespace ECommerceAPI.Infrastructure.Services.Storage.Local
 
             foreach (var file in files)
             {
-                string newFileName = await RenameFileAsync(file.Name); //file.FileName
+                string newFileName = await RenameFileAsync(file.Name); 
 
                 await CopyFileAsync($"{uploadPath}/{newFileName}", file);
                 filesList.Add((newFileName, $"{path}/{newFileName}"));

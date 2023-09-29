@@ -30,9 +30,10 @@ namespace ECommerceAPI.Infrastructure.Services.Storage.Azure
 
             foreach (var file in files)
             {
-                string newFileName = await RenameFileAsync(file.Name); //file.FileName
+                string newFileName = await RenameFileAsync(file.Name); 
 
                 var blobClient = _blobContainerClient.GetBlobClient(newFileName);
+
                 await blobClient.UploadAsync(file.OpenReadStream());
                 entities.Add((newFileName, containerName));
             }
