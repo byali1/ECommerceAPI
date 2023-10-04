@@ -26,12 +26,14 @@ namespace ECommerceAPI.API.Controllers
         private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
         private readonly IInvoiceFileReadRepository _invoiceFileReadRepository;
         private readonly IInvoiceFileWriteRepository _invoiceFileWriteRepository;
+        private readonly IConfiguration _configuration;
+
 
         private readonly IStorageService _storageService;
 
 
 
-        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IWebHostEnvironment webHostEnvironment, IFileWriteRepository fileWriteRepository, IFileReadRepository fileReadRepository, IProductImageFileReadRepository productImageFileReadRepository, IProductImageFileWriteRepository productImageFileWriteRepository, IInvoiceFileReadRepository invoiceFileReadRepository, IInvoiceFileWriteRepository invoiceFileWriteRepository, IStorageService storageService)
+        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IWebHostEnvironment webHostEnvironment, IFileWriteRepository fileWriteRepository, IFileReadRepository fileReadRepository, IProductImageFileReadRepository productImageFileReadRepository, IProductImageFileWriteRepository productImageFileWriteRepository, IInvoiceFileReadRepository invoiceFileReadRepository, IInvoiceFileWriteRepository invoiceFileWriteRepository, IStorageService storageService, IConfiguration configuration)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
@@ -43,6 +45,7 @@ namespace ECommerceAPI.API.Controllers
             _invoiceFileReadRepository = invoiceFileReadRepository;
             _invoiceFileWriteRepository = invoiceFileWriteRepository;
             _storageService = storageService;
+            _configuration = configuration;
         }
 
         //Test
@@ -148,6 +151,37 @@ namespace ECommerceAPI.API.Controllers
             await _productImageFileWriteRepository.SaveAsync();
             return Ok();
         }
+
+        //Test
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetProductImagesById(string id)
+        {
+            var product = await _productReadRepository.Table.Include(p => p.ProductImageFiles)
+                  .FirstOrDefaultAsync(p => p.Id == Guid.Parse(id));
+
+
+
+            return Ok(product.ProductImageFiles.Select(p => new
+            {
+                Path = $"{_configuration["BaseStorageUrl"]}/{p.Path}",
+                p.FileName,
+                p.Id
+            }));
+        }
+
+        //TEst
+        [HttpDelete("[action]/{id}")]
+        public async Task<IActionResult> DeleteProductImage(string id, string imageId)
+        {
+            var product = await _productReadRepository.Table.Include(p => p.ProductImageFiles)
+                .FirstOrDefaultAsync(p => p.Id == Guid.Parse(id));
+
+            var imageFile = product.ProductImageFiles.FirstOrDefault(p => p.Id == Guid.Parse(imageId));
+            product.ProductImageFiles.Remove(imageFile);
+            await _productImageFileWriteRepository.SaveAsync();
+            return Ok();
+        }
+
     }
 }
 
