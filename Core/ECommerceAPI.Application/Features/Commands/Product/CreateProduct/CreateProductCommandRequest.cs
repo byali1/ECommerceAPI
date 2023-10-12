@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 
-namespace ECommerceAPI.Application.Features.Commands.CreateProduct
+namespace ECommerceAPI.Application.Features.Commands.Product.CreateProduct
 {
     public class CreateProductCommandRequest : IRequest<CreateProductCommandResponse>
     {
